@@ -39,39 +39,5 @@ body{
   transition: opacity .2s ease-out;
   color: #545454;
   text-align: right;
-
-    .subheading {
-      font-size: 18px 
-    }
 }
 
-#tooltip {
-  position: absolute;
-  background-color: #7A7C90;  
-  color: white;
-  height: auto;
-  width: auto;
-  padding: 7px;
-  border-radius: 4px;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.y-axis-label,
-.legend {
-  font-family: 'Roboto', sans-serif;
-}
-
-.y-axis-label {
-  font-size: 15px;
-}
-
-.rect-label {
-  height: 20; 
-  transition: height .2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-}
-
-.rect-label:hover {
-  height: 50;
-  transition: height .2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-}
