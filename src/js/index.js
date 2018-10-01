@@ -17,13 +17,14 @@ const tooltip = d3.select("body")
   .append('div')
   .attr('id', 'tooltip')
 
+// const legend = d3.select("#chart")
+//   .append('rect')
+//   .attr('id', 'legend')
+
 document.addEventListener("DOMContentLoaded", (event) => {
   fetch(api)
     .then(res => res.json())
     .then(data => {
-
-      // console.log(data.monthlyVariance)
-      // console.log(data.monthlyVariance.length);
 
       const actualWidth = +svg.attr('width') - (padding * 2);
       const actualHeight = +svg.attr('height') - (padding * 2);
@@ -38,63 +39,17 @@ document.addEventListener("DOMContentLoaded", (event) => {
       const color = ['#FFFFCC', '#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#BD0026', '#800026', '#510018', '#2F0108']
       const num_ticks = Math.floor((data.monthlyVariance.length / 12) / 10);
 
-      // console.log(minYears);
-      // console.log(maxYears);
-
-      // console.log(d3.extent(monthlyVariance, (d) => d.year))
-
-      // const timeFormat = d3.timeFormat('%M:%S');
-      // const parseTime = d3.timeParse('%M:%S');
-      // const colorOrdinal = d3.scaleOrdinal(d3.schemeSet2); 
-
       let xScale = d3.scaleLinear()
         .domain(d3.extent(monthlyVariance, (d) => d.year))
         .range([padding + 30, width - padding])
-
-      // console.log(xScale.domain()) 
-      // console.log(xScale.range())
-      // console.log(xScale(1756))
-
-      // // console.log(d3.extent(data, (d) => d.Seconds))
-
-      // let yScale = d3.scaleTime()
-      //   .domain([0, 11])
-      //   .range([padding, height - padding])
-      // console.log(d3.extent(monthlyVariance, (d) => d.month - 1 ))
 
       let yScale = d3.scaleBand()
         .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
         .range([padding, height - padding])
 
-
       let colorScale = d3.scaleQuantize()
         .domain(d3.extent(monthlyVariance, (d) => d.variance))
         .range(color)
-
-
-      // let yScale = d3.scaleTime()
-      //   .domain([min])
-
-      // console.log(yScale.domain()) 
-      // console.log(yScale.range())
-      // console.log(yScale(2))
-      // console.log(yScale.bandWidth())
-
-      // console.log(yScale)
-
-      // console.log(yScale(0))
-      // console.log(yScale.domain())
-      // console.log(new Date(0, 0, 1))
-      // console.log(new Date(0).utcMonth(0))
-      // console.log(yScale('January'))
-      // console.log(yScale('February'))
-      // console.log(new Date())
-      // console.log(new Date(0).setUTCMonth(2))
-      // let date = new Date(0).setUTCMonth(2)
-      // console.log(date)
-      // console.log(d3.timeFormat('%B')(date))
-      // console.log(d3.timeMonth)
-      // console.log(new Date(1000))
 
       let xAxis = d3.axisBottom(xScale)
         .ticks(num_ticks)
@@ -104,18 +59,24 @@ document.addEventListener("DOMContentLoaded", (event) => {
       let yAxis = d3.axisLeft(yScale)
         .ticks(months.length)
         .tickSizeOuter(0)
-        // .tickValues(yScale.domain())
-        // .tickFormat(d3.timeFormat('%B'))
         .tickFormat((year) => {
           let date = new Date(0);
           date.setUTCMonth(year);
           return d3.timeFormat("%B")(date);
         })
 
+      // console.log(colorScale.domain())
+      // console.log(colorScale.range())
+      // console.log(colorScale.range().length)
+      // console.log(colorScale(6.0))
+
       svg.append('g')
         .call(xAxis)
         .attr('id', 'x-axis')
         .attr('transform', `translate(0, ${height - padding})`)
+
+      d3.select('path')
+        .attr('stroke', 0)
 
       svg.append('g')
         .call(yAxis)
@@ -137,8 +98,27 @@ document.addEventListener("DOMContentLoaded", (event) => {
           tooltip.html(`${months[d.month -1]} ${d.year} <br> Temperature: ${(baseTemperature + d.variance).toFixed(2)} &#8451 <br> Variance: ${d.variance} &#8451`)
             .style('left', d3.event.clientX - 90)
             .style('top', d3.event.clientY - 105)
+            .style('opacity', 1)
+        })
+        .on('mouseout', (d) => {
+          tooltip.style('opacity', 0)
         })
 
+        // legend.append('g')
+        //   .attr('id', 'legend')
+        //   .attr('transform', `translate(0, ${actualHeight})`)
+
+        svg.append('g')
+          .attr('id','legend')
+          .selectAll('rect')
+          .data(color)
+          .enter()
+          .append('rect')
+          .attr('width', 30)
+          .attr('height', 30)
+          .style('fill', (d, i) => color[i])
+          .attr('x', (d,i) => i * 30)
+          .attr('transform', `translate(0, ${height - 38})`)
     })
 });
 
